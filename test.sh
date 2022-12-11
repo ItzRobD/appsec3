@@ -5,7 +5,5 @@ kubectl apply -f db/k8
 kubectl apply -f GiftcardSite/k8
 kubectl apply -f proxy/k8
 kubectl apply -f test-secret.yaml
-kubectl apply -f django-migration.yaml
-kubectl apply -f seeding.yaml
 kubectl get pods
 kubectl get service

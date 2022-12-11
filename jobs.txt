@@ -1,0 +1,36 @@
+I need to use a kubernetes job to handle the django migrations so I created a yaml file for this named django-migration.yaml.
+It will run the manage.py migrate command using the environment variables we need.
+
+Just like the secrets in order to use this we need to run the following command:
+
+kubectl apply -f django-migration.yaml
+
+To seed the db using a job I created the seeding.yaml file which contains the job.
+This will run a similar file to setup.sql called seeding.sql which will load the products and users to the table.
+In order to make sure this isn't done the previous way I edited the dockerfile to
+copy the csvs to a seeding directory which seeding.sql is pointing to.
+
+After this job runs, I get a bash shell by using
+
+kubectl exec -it pod/mysql-container-c75989f96-8dlxz /bin/bash
+
+Then I can log in to the mysql database and use show tables to see they exist
+
+mysql> show tables;
++----------------------------+
+| Tables_in_GiftcardSiteDB   |
++----------------------------+
+| LegacySite_card            |
+| LegacySite_product         |
+| LegacySite_user            |
+| auth_group                 |
+| auth_group_permissions     |
+| auth_permission            |
+| auth_user                  |
+| auth_user_groups           |
+| auth_user_user_permissions |
+| django_admin_log           |
+| django_content_type        |
+| django_migrations          |
+| django_session             |
++----------------------------+

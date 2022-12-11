@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seeding
+spec:
+  backoffLimit: 5
+  template:
+    spec:
+      containers:
+      - name: seeding
+        image: 'nyuappsec/assign3-db:v0'
+        command: ["/bin/sh"]
+        args: ["-c","mysql --user=root --password=${MYSQL_ROOT_PASSWORD} --database=${MYSQL_DATABASE} --host=mysql-service -f < /docker-entrypoint-initdb.d/seeding.sql"]
+        env: 
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: test-secret
+                  key: password
+
+            - name: MYSQL_DB
+              value: GiftcardSiteDB
+      restartPolicy: Never
