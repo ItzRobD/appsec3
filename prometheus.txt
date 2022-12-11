@@ -1,0 +1,30 @@
+The writer of this has done some weird things. For some reason it looks like they're adding the inputted
+passwords to the graph dict as a key. I can't see that being a good thing so I've removed that around line 50.
+I also don't think we need to track the number of registers and logins. If any passwords are exposed
+in that process it could be bad.
+
+To expand monitoring throughout the code 404 errors are being raised. I created a counter for these
+and added it to where ever I saw a raised 404 error. That could be useful if things break on the back end.
+
+To get prometheus working and able to monitor the service I used the following commands in order:
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+sh ./get_helm.sh
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo update
+helm install prometheus prometheus-community/prometheus
+export KUBE_EDITOR="nano"
+kubectl get configmap
+kubectl edit configmap prometheus-server
+kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-np
+minikube service prometheus-server-np
+
+During this process I was able to edit the yaml config file for prometheus. I added a new job for the
+GiftCard Site and changed some of the timing because I thought some were too long to give good results.
+I was able to export this file as kubectl-edit-1264040570.yaml
+
+While on the prometheus ui site I was able to see that I was connected to the gift card site service
+and I was able to view metrics.
+
